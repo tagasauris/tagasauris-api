@@ -34,6 +34,14 @@ class TagasaurisClient(object):
         required_params=['id', 'title', 'task', ['mediaobjects', 's3']]
     )
 
+    """ Status progress tracking """
+    status_progress = bind_api(
+        path='status/progress/{status_key}/',
+        method='get',
+        url_params=['status_key'],
+        api_version=1
+    )
+
     """ Transform result """
     transform_result = bind_api(
         path='transformresult/',
