@@ -1,4 +1,4 @@
-class TagApiException(Exception):
+class TagasaurisApiException(Exception):
     """ Tagapi exception """
 
     def __init__(self, reason, response=None):

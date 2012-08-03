@@ -1,35 +1,43 @@
 import json
 import requests
 
+from error import TagasaurisApiException
+
 
 def bind_api(**config):
 
-    # class APIMethod(object):
-
-    #     path = config['path']
-    #     api_version = config.get('api_version', None)
-
-    #     def __init__(self, api):
-    #         self.api = api
-    #         if self.api_version is None:
-    #             self.api_version = self.api.api_version
-    #         self.url = "%s/api/%s/%s" % (api.host, self.api_version, self.path)
-
-    #     def execute(self):
-    #         reply = requests.post(self.url,
-    #             data=json.dumps(data),
-    #             cookies=self.api.auth)
-    #         return reply.content
-
-    def _call(api, data):
+    def _call(api, *args, **kwargs):
         path = config['path']
+        method = config['method']
+        required_params = config.get('required_params', [])
+        optional_params = config.get('optional_params', [])
         api_version = config.get('api_version', api.api_version)
+
+        # Check if we have all required params provided
+        for r in required_params:
+            if not isinstance(r, list):
+                r = [r]
+            if not any([x in kwargs.keys() for x in r]):
+                raise TagasaurisApiException(
+                    'Required parameter "%s" not provided!' % r[0])
+
+        # We don't want to send garbage to api.
+        for k in kwargs.keys():
+            if k not in required_params or k not in optional_params:
+                raise TagasaurisApiException("Unknown argument: %s." % k)
 
         url = "%s/api/%s/%s" % (api.host, api_version, path)
 
-        reply = requests.post(url,
-            data=json.dumps(data),
-            cookies=api.auth)
+        if method is 'post':
+            reply = requests.post(url,
+                data=json.dumps(kwargs),
+                cookies=api.auth)
+
+        if method is 'get':
+            reply = requests.get(url,
+                params=kwargs,
+                cookies=api.auth)
+
         return reply.content
 
     return _call

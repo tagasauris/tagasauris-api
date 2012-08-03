@@ -1,14 +1,14 @@
 import requests
 
 from binder import bind_api
-from error import TagApiException
+from error import TagasaurisApiException
 
 
 class API(object):
     """ Tagasauris api client """
 
     def __init__(self, auth=None, login=None, password=None,
-            host='tagasauris.com', api_version=2):
+            host='devel.tagasauris.com', api_version=2):
 
         self.host = host
         self.api_version = api_version
@@ -26,7 +26,19 @@ class API(object):
             self.auth = reply.cookies
 
         if not self.auth:
-            raise TagApiException('Authentication required!')
+            raise TagasaurisApiException('Authentication required!')
 
     """ Job creation """
-    create_job = bind_api(path='job/')
+    create_job = bind_api(
+        path='job/',
+        method='post',
+        required_params=['id', 'title', 'task', ['mediaobject', 's3']]
+    )
+
+    """ Transform result """
+    transform_result = bind_api(
+        path='transformresult/',
+        method='get',
+        optional_params=['job_id', 'created', 'correct', 'page', 'per_page'],
+        api_version=3
+    )
