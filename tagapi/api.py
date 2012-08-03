@@ -4,11 +4,11 @@ from binder import bind_api
 from error import TagasaurisApiException
 
 
-class API(object):
+class TagasaurisClient(object):
     """ Tagasauris api client """
 
-    def __init__(self, login=None, password=None,
-            host='https://devel.tagasauris.com', api_version=2):
+    def __init__(self, login, password, host='http://devel.tagasauris.com',
+            api_version=2):
 
         self.host = host
         self.api_version = api_version
@@ -31,7 +31,7 @@ class API(object):
     create_job = bind_api(
         path='job/',
         method='post',
-        required_params=['id', 'title', 'task', ['mediaobject', 's3']]
+        required_params=['id', 'title', 'task', ['mediaobjects', 's3']]
     )
 
     """ Transform result """

@@ -1,5 +1,6 @@
 import json
 
+from tools import flat_list
 from error import TagasaurisApiException
 
 
@@ -21,8 +22,10 @@ def bind_api(**config):
                     'Required parameter "%s" not provided!' % r[0])
 
         # We don't want to send garbage to api.
+        allowed_paams = list(flat_list(required_params)) +\
+            list(flat_list(optional_params))
         for k in kwargs.keys():
-            if k not in required_params or k not in optional_params:
+            if k not in allowed_paams:
                 raise TagasaurisApiException("Unknown argument: %s." % k)
 
         url = "%s/api/%s/%s" % (api.host, api_version, path)
