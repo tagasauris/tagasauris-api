@@ -1,5 +1,4 @@
 import json
-import requests
 
 from error import TagasaurisApiException
 
@@ -29,14 +28,12 @@ def bind_api(**config):
         url = "%s/api/%s/%s" % (api.host, api_version, path)
 
         if method is 'post':
-            reply = requests.post(url,
-                data=json.dumps(kwargs),
-                cookies=api.auth)
+            reply = api.session.post(url,
+                data=json.dumps(kwargs))
 
         if method is 'get':
-            reply = requests.get(url,
-                params=kwargs,
-                cookies=api.auth)
+            reply = api.session.get(url,
+                params=kwargs)
 
         return reply.content
 

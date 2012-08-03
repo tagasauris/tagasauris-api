@@ -7,25 +7,24 @@ from error import TagasaurisApiException
 class API(object):
     """ Tagasauris api client """
 
-    def __init__(self, auth=None, login=None, password=None,
-            host='devel.tagasauris.com', api_version=2):
+    def __init__(self, login=None, password=None,
+            host='https://devel.tagasauris.com', api_version=2):
 
         self.host = host
         self.api_version = api_version
-        self.auth = auth
+        self.session = requests.session()
 
-        # Unless we provide auth cookies we must use login & pass.
-        # Each api call is authenticated!
-        if self.auth is None and login is not None and password is not None:
+        # Each api call is authenticated with login & pass!
+        if login is not None and password is not None:
             credentials = {
                 "login": login,
                 "password": password
             }
-            reply = requests.post("%s/api/2/login/" % self.host,
+            self.session.post("%s/api/2/login/" % self.host,
                 data=credentials)
-            self.auth = reply.cookies
 
-        if not self.auth:
+        # No auth data provided.
+        else:
             raise TagasaurisApiException('Authentication required!')
 
     """ Job creation """
