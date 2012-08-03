@@ -34,11 +34,20 @@ class TagasaurisClient(object):
         required_params=['id', 'title', 'task', ['mediaobjects', 's3']]
     )
 
-    """ Status progress tracking """
+    """ Progress tracking """
     status_progress = bind_api(
         path='status/progress/{status_key}/',
         method='get',
         url_params=['status_key'],
+        api_version=1
+    )
+
+    """ Messages tracking """
+    status_messages = bind_api(
+        path='status/messages/{status_key}/',
+        method='get',
+        url_params=['status_key'],
+        optional_params=['page'],
         api_version=1
     )
 

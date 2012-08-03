@@ -54,6 +54,6 @@ def bind_api(**config):
             reply = api.session.get(url,
                 params=data)
 
-        return reply.content
+        return json.loads(reply.content)
 
     return _call
