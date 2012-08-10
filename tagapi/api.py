@@ -1,7 +1,7 @@
 import requests
 
 from binder import bind_api
-from dummy import DUMMY_IMAGE_BASE64, DUMMY_IMAGE_MIME
+from dummy import make_dummy
 from error import TagasaurisApiException
 
 
@@ -29,11 +29,16 @@ class TagasaurisClient(object):
             raise TagasaurisApiException('Authentication required!')
 
     """ Job creation """
-    create_job = bind_api(
+    _create_job = bind_api(
         path='job/',
         method='post',
         required_params=['id', 'title', 'task', ['mediaobjects', 's3']]
     )
+
+    def create_job(self, dummy_media=None, *args, **kwargs):
+        if dummy_media is not None:
+            kwargs['mediaobjects'] = make_dummy(dummy_media)
+        return self._create_job(*args, **kwargs)
 
     """ Progress tracking """
     status_progress = bind_api(
@@ -71,11 +76,7 @@ class TagasaurisClient(object):
 
     """ Creates dummy object for proper job creation """
     def mediaobject_add_dummy(self, dummy_id):
-        return self.mediaobject_send([{
-            'id': dummy_id,
-            'mimetype': DUMMY_IMAGE_MIME,
-            'content': DUMMY_IMAGE_BASE64
-        }])
+        return self.mediaobject_send(make_dummy(dummy_id))
 
     """ Media object validation """
     mediaobject_validate = bind_api(
