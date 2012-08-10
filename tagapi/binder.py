@@ -23,11 +23,11 @@ def bind_api(**config):
                     'Required parameter "%s" not provided!' % r[0])
 
         # We don't want to send garbage to api.
-        allowed_paams = list(flat_list(required_params)) +\
+        allowed_parameters = list(flat_list(required_params)) +\
             list(flat_list(optional_params)) +\
             list(flat_list(url_params))
         for k in kwargs.keys():
-            if k not in allowed_paams:
+            if k not in allowed_parameters:
                 raise TagasaurisApiException("Unknown argument: %s." % k)
 
         # Filling path with arguments.

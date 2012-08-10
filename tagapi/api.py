@@ -58,3 +58,19 @@ class TagasaurisClient(object):
         optional_params=['job_id', 'created', 'correct', 'page', 'per_page'],
         api_version=3
     )
+
+    """ Media object import """
+    mediaobject_send = bind_api(
+        path='mediaobject/import/',
+        method='post',
+        required_params=['mimetype', 'id', ['content', 'url']],
+        optional_params=['title', 'labels', 'attributes'],
+    )
+
+    """ Media object validation """
+    mediaobject_validate = bind_api(
+        path='mediaobject/import/validate_only/',
+        method='post',
+        required_params=['mimetype', 'id', ['content', 'url']],
+        optional_params=['title', 'labels', 'attributes'],
+    )
