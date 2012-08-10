@@ -1,6 +1,7 @@
 import requests
 
 from binder import bind_api
+from dummy import DUMMY_IMAGE_BASE64, DUMMY_IMAGE_MIME
 from error import TagasaurisApiException
 
 
@@ -63,14 +64,24 @@ class TagasaurisClient(object):
     mediaobject_send = bind_api(
         path='mediaobject/import/',
         method='post',
+        list=True,
         required_params=['mimetype', 'id', ['content', 'url']],
         optional_params=['title', 'labels', 'attributes'],
     )
+
+    """ Creates dummy object for proper job creation """
+    def mediaobject_add_dummy(self, dummy_id):
+        return self.mediaobject_send([{
+            'id': dummy_id,
+            'mimetype': DUMMY_IMAGE_MIME,
+            'content': DUMMY_IMAGE_BASE64
+        }])
 
     """ Media object validation """
     mediaobject_validate = bind_api(
         path='mediaobject/import/validate_only/',
         method='post',
+        list=True,
         required_params=['mimetype', 'id', ['content', 'url']],
         optional_params=['title', 'labels', 'attributes'],
     )
