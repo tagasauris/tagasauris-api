@@ -40,6 +40,14 @@ class TagasaurisClient(object):
             kwargs['mediaobjects'] = make_dummy(dummy_media)
         return self._create_job(*args, **kwargs)
 
+    """ Job read """
+    get_job = bind_api(
+        path='job/{external_id}/',
+        method='get',
+        url_params=['external_id'],
+        api_version='crud'
+    )
+
     """ Progress tracking """
     status_progress = bind_api(
         path='status/progress/{status_key}/',
