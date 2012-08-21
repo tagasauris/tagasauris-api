@@ -48,6 +48,14 @@ class TagasaurisClient(object):
         api_version='crud'
     )
 
+    """ Job add media objects """
+    job_add_media = bind_api(
+        path='job/{external_id}/add_media/',
+        method='post',
+        required_params=['external_ids'],
+        url_params=['external_id'],
+    )
+
     """ Progress tracking """
     status_progress = bind_api(
         path='status/progress/{status_key}/',
