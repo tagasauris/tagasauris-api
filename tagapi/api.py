@@ -1,8 +1,12 @@
+import time
+
 import requests
 
 from binder import bind_api
 from dummy import make_dummy
 from error import TagasaurisApiException
+
+WAIT_COOLDOWN = 3
 
 
 class TagasaurisClient(object):
@@ -102,3 +106,14 @@ class TagasaurisClient(object):
         required_params=['mimetype', 'id', ['content', 'url']],
         optional_params=['title', 'labels', 'attributes'],
     )
+
+    def wait_for_complete(self, result):
+        key = result['key']
+        completed = False
+
+        while not completed:
+            res = self.status_progress(status_key=key)
+            completed = res['completed'] == 100 and res['status'] == 'ok'
+            time.sleep(WAIT_COOLDOWN)
+
+        return result
