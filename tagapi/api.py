@@ -111,9 +111,16 @@ class TagasaurisClient(object):
         key = result['key']
         completed = False
 
+        # TODO: add MAX_RETRIES.
         while not completed:
             res = self.status_progress(status_key=key)
-            completed = res['completed'] == 100 and res['status'] == 'ok'
+
+            # This is case when we ask for status immediately after recieving
+            # status_key. Sometimes dict is empty and we need to ask for it
+            # again.
+            if res != {}:
+                completed = res['completed'] == 100 and res['status'] == 'ok'
+
             time.sleep(WAIT_COOLDOWN)
 
         return result
