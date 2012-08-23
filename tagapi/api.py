@@ -107,8 +107,9 @@ class TagasaurisClient(object):
         optional_params=['title', 'labels', 'attributes'],
     )
 
-    def wait_for_complete(self, result):
-        key = result['key']
+    def wait_for_complete(self, key, interval=WAIT_COOLDOWN):
+        if type(key) is dict:
+            key = key['key']
         completed = False
 
         # TODO: add MAX_RETRIES.
@@ -120,7 +121,9 @@ class TagasaurisClient(object):
             # again.
             if res != {}:
                 completed = res['completed'] == 100 and res['status'] == 'ok'
+                if not completed and res['completed'] == 100:
+                    raise TagasaurisApiException('Task %s failed!' % key)
 
-            time.sleep(WAIT_COOLDOWN)
+            time.sleep(interval)
 
-        return result
+        return key
