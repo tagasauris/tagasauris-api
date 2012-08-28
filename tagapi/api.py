@@ -36,7 +36,8 @@ class TagasaurisClient(object):
     _create_job = bind_api(
         path='job/',
         method='post',
-        required_params=['id', 'title', 'task', ['mediaobjects', 's3']]
+        required_params=['id', 'title', 'task', ['mediaobjects', 's3']],
+        optional_params=['workflow'],
     )
 
     def create_job(self, dummy_media=None, *args, **kwargs):
