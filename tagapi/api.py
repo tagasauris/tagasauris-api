@@ -40,9 +40,9 @@ class TagasaurisClient(object):
         optional_params=['workflow'],
     )
 
-    def create_job(self, dummy_media=None, *args, **kwargs):
-        if dummy_media is not None:
-            kwargs['mediaobjects'] = make_dummy(dummy_media)
+    def create_job(self, dummy_media=[], *args, **kwargs):
+        if dummy_media:
+            kwargs['mediaobjects'] = [make_dummy(dm) for dm in dummy_media]
         return self._create_job(*args, **kwargs)
 
     """ Job read """
@@ -97,7 +97,7 @@ class TagasaurisClient(object):
 
     """ Creates dummy object for proper job creation """
     def mediaobject_add_dummy(self, dummy_id):
-        return self.mediaobject_send(make_dummy(dummy_id))
+        return self.mediaobject_send([make_dummy(dummy_id)])
 
     """ Media object validation """
     mediaobject_validate = bind_api(
