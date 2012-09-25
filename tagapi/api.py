@@ -42,7 +42,8 @@ class TagasaurisClient(object):
 
     def create_job(self, dummy_media=[], *args, **kwargs):
         if dummy_media:
-            kwargs['mediaobjects'] = [make_dummy(dm) for dm in dummy_media]
+            kwargs['mediaobjects'] = [make_dummy(title, url)
+                for (title, url) in dummy_media]
         return self._create_job(*args, **kwargs)
 
     """ Job read """
@@ -112,6 +113,9 @@ class TagasaurisClient(object):
         if type(key) is dict:
             key = key['key']
         completed = False
+
+        if len(key) < 32:
+            raise TagasaurisApiException('Wrong key given: %s' % key)
 
         # TODO: add MAX_RETRIES.
         while not completed:
