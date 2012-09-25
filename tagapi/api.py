@@ -6,7 +6,11 @@ from binder import bind_api
 from dummy import make_dummy
 from error import TagasaurisApiException
 
+import logging
+log = logging.getLogger(__name__)
+
 WAIT_COOLDOWN = 3
+MAX_RETRIES = 10
 
 
 class TagasaurisClient(object):
@@ -52,6 +56,13 @@ class TagasaurisClient(object):
         method='get',
         url_params=['external_id'],
         api_version='crud'
+    )
+
+    """ Job stop """
+    stop_job = bind_api(
+        path='job/{external_id}/stop/',
+        method='get',
+        url_params=['external_id'],
     )
 
     """ Job add media objects """
@@ -117,17 +128,25 @@ class TagasaurisClient(object):
         if len(key) < 32:
             raise TagasaurisApiException('Wrong key given: %s' % key)
 
-        # TODO: add MAX_RETRIES.
+        try_count = 0
         while not completed:
-            res = self.status_progress(status_key=key)
+            try:
+                res = self.status_progress(status_key=key)
 
-            # This is case when we ask for status immediately after recieving
-            # status_key. Sometimes dict is empty and we need to ask for it
-            # again.
-            if res != {}:
-                completed = res['completed'] == 100 and res['status'] == 'ok'
-                if not completed and res['completed'] == 100:
-                    raise TagasaurisApiException('Task %s failed!' % key)
+                # This is case when we ask for status immediately after recieving
+                # status_key. Sometimes dict is empty and we need to ask for it
+                # again.
+                if res != {}:
+                    completed = res['completed'] == 100 and res['status'] == 'ok'
+                    if not completed and res['completed'] == 100:
+                        raise TagasaurisApiException('Task %s failed!' % key)
+            except Exception, e:
+                log.exception(e)
+
+            try_count += 1
+            if try_count > MAX_RETRIES:
+                raise TagasaurisApiException(
+                    'Task %s status check failed too many times!' % key)
 
             time.sleep(interval)
 
