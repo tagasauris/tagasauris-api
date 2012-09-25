@@ -92,8 +92,8 @@ class TagasaurisClient(object):
         path='mediaobject/import/',
         method='post',
         list=True,
-        required_params=['mimetype', 'id', ['content', 'url']],
-        optional_params=['title', 'labels', 'attributes'],
+        required_params=['mimetype', 'id', 'url', 'title'],
+        optional_params=['labels', 'attributes'],
     )
 
     """ Creates dummy object for proper job creation """
