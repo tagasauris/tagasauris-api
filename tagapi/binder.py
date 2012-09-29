@@ -74,6 +74,11 @@ def bind_api(**config):
             reply = api.session.get(url,
                 params=data)
 
+        if reply.status_code >= 400:
+            raise TagasaurisApiException(
+                "Tagasauris call %s failed." % url,
+                response=reply)
+
         try:
             return json.loads(reply.content)
         except ValueError:

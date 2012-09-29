@@ -9,7 +9,7 @@ from error import TagasaurisApiException
 import logging
 log = logging.getLogger(__name__)
 
-WAIT_COOLDOWN = 3
+WAIT_COOLDOWN = 2
 MAX_RETRIES = 10
 
 
@@ -120,7 +120,8 @@ class TagasaurisClient(object):
         optional_params=['title', 'labels', 'attributes'],
     )
 
-    def wait_for_complete(self, key, interval=WAIT_COOLDOWN):
+    def wait_for_complete(self, key, interval=WAIT_COOLDOWN,
+            exponential_backoff=True):
         if type(key) is dict:
             key = key['key']
         completed = False
@@ -149,5 +150,7 @@ class TagasaurisClient(object):
                     'Task %s status check failed too many times!' % key)
 
             time.sleep(interval)
+            if exponential_backoff:
+                interval *= 2
 
         return key

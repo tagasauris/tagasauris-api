@@ -7,3 +7,6 @@ class TagasaurisApiException(Exception):
 
     def __str__(self):
         return self.reason
+
+    def __unicode__(self):
+        return self.reason
