@@ -9,8 +9,8 @@ from error import TagasaurisApiException
 import logging
 log = logging.getLogger(__name__)
 
-WAIT_COOLDOWN = 2
-MAX_RETRIES = 10
+WAIT_COOLDOWN = 1
+MAX_RETRIES = 20
 
 
 class TagasaurisClient(object):
