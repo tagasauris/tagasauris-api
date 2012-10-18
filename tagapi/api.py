@@ -17,12 +17,10 @@ def exponential_backoff(base=2, max_retries=MAX_RETRIES):
     """
         Generates exponential backoff.
     """
-    step = 0
     value = 1
-    while step < max_retries:
+    for _ in xrange(max_retries):
         yield value
         value *= base
-        step += 1
     yield 0
 
 
@@ -33,10 +31,8 @@ def combined_exponential_backoff(base=2, steps=10, retries=4):
     """
     for _ in xrange(retries):
         value = 1
-        step = 0
-        while step < steps:
+        for _x in xrange(steps):
             yield value
-            step += 1
             value *= base
     yield 0
 
