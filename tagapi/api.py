@@ -146,9 +146,9 @@ class TagasaurisClient(object):
 
     """ Worker read """
     get_worker = bind_api(
-        path='worker/{external_id}/',
+        path='worker/{worker_id}/',
         method='get',
-        url_params=['external_id'],
+        url_params=['worker_id'],
         api_version='2'
     )
 
