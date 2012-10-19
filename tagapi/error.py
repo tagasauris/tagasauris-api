@@ -10,3 +10,7 @@ class TagasaurisApiException(Exception):
 
     def __unicode__(self):
         return self.reason
+
+
+class TagasaurisApiMaxRetries(TagasaurisApiException):
+    """ Max retries exceeded """

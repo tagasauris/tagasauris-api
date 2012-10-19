@@ -4,13 +4,37 @@ import requests
 
 from binder import bind_api
 from dummy import make_dummy
-from error import TagasaurisApiException
+from error import TagasaurisApiException, TagasaurisApiMaxRetries
 
 import logging
 log = logging.getLogger(__name__)
 
 WAIT_COOLDOWN = 1
 MAX_RETRIES = 20
+
+
+def exponential_backoff(base=2, max_retries=MAX_RETRIES):
+    """
+        Generates exponential backoff.
+    """
+    value = 1
+    for _ in xrange(max_retries):
+        yield value
+        value *= base
+    yield 0
+
+
+def combined_exponential_backoff(base=2, steps=10, retries=4):
+    """
+        Combines `retries` exponential backoffs of `steps` steps for increased
+        response times in-between.
+    """
+    for _ in xrange(retries):
+        value = 1
+        for _x in xrange(steps):
+            yield value
+            value *= base
+    yield 0
 
 
 class TagasaurisClient(object):
@@ -120,8 +144,8 @@ class TagasaurisClient(object):
         optional_params=['title', 'labels', 'attributes'],
     )
 
-    def wait_for_complete(self, key, interval=WAIT_COOLDOWN,
-            exponential_backoff=True):
+    def wait_for_complete(self, key,
+            backoff=combined_exponential_backoff()):
         if type(key) is dict:
             key = key['key']
         completed = False
@@ -129,7 +153,6 @@ class TagasaurisClient(object):
         if len(key) < 32:
             raise TagasaurisApiException('Wrong key given: %s' % key)
 
-        try_count = 0
         while not completed:
             try:
                 res = self.status_progress(status_key=key)
@@ -144,13 +167,11 @@ class TagasaurisClient(object):
             except Exception, e:
                 log.exception(e)
 
-            try_count += 1
-            if try_count > MAX_RETRIES:
-                raise TagasaurisApiException(
+            sleep_time = backoff.next()
+            if not sleep_time:
+                raise TagasaurisApiMaxRetries(
                     'Task %s status check failed too many times!' % key)
 
-            time.sleep(interval)
-            if exponential_backoff:
-                interval *= 2
+            time.sleep(sleep_time)
 
         return key
