@@ -144,6 +144,14 @@ class TagasaurisClient(object):
         optional_params=['title', 'labels', 'attributes'],
     )
 
+    """ Worker read """
+    get_worker = bind_api(
+        path='worker/{external_id}/',
+        method='get',
+        url_params=['external_id'],
+        api_version='2'
+    )
+
     def wait_for_complete(self, key,
             backoff=combined_exponential_backoff()):
         if type(key) is dict:
