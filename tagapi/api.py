@@ -30,10 +30,10 @@ def combined_exponential_backoff(base=2, steps=10, retries=4):
         response times in-between.
     """
     for _ in xrange(retries):
-        value = 1
-        for _x in xrange(steps):
-            yield value
-            value *= base
+        exp = exponential_backoff(base=2, max_retries=steps)
+        for val in exp:
+            if val:
+                yield val
     yield 0
 
 
@@ -153,7 +153,7 @@ class TagasaurisClient(object):
     )
 
     def wait_for_complete(self, key,
-            backoff=combined_exponential_backoff()):
+            backoff=combined_exponential_backoff):
         if type(key) is dict:
             key = key['key']
         completed = False
@@ -161,6 +161,7 @@ class TagasaurisClient(object):
         if len(key) < 32:
             raise TagasaurisApiException('Wrong key given: %s' % key)
 
+        backoff_generator = backoff()
         while not completed:
             try:
                 res = self.status_progress(status_key=key)
@@ -175,7 +176,7 @@ class TagasaurisClient(object):
             except Exception, e:
                 log.exception(e)
 
-            sleep_time = backoff.next()
+            sleep_time = backoff_generator.next()
             if not sleep_time:
                 raise TagasaurisApiMaxRetries(
                     'Task %s status check failed too many times!' % key)
