@@ -32,7 +32,8 @@ def combined_exponential_backoff(base=2, steps=10, retries=4):
     for _ in xrange(retries):
         exp = exponential_backoff(base=2, max_retries=steps)
         for val in exp:
-            yield val
+            if val:
+                yield val
     yield 0
 
 
