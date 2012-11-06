@@ -1,4 +1,5 @@
 import json
+import requests
 
 from tools import flat_list
 from error import TagasaurisApiException
@@ -13,6 +14,7 @@ def bind_api(**config):
         url_params = config.get('url_params', [])
         required_params = config.get('required_params', [])
         optional_params = config.get('optional_params', [])
+        timeout = config.get('timeout', None)
         api_version = config.get('api_version', api.api_version)
 
         if sending_list:
@@ -66,13 +68,18 @@ def bind_api(**config):
             data = dict([(k, v) for k, v in kwargs.items()\
                 if k not in url_params])
 
-        if method is 'post':
-            reply = api.session.post(url,
-                data=json.dumps(data))
+        try:
+            if method is 'post':
+                reply = api.session.post(url,
+                    data=json.dumps(data), timeout=timeout)
 
-        if method is 'get':
-            reply = api.session.get(url,
-                params=data)
+            if method is 'get':
+                reply = api.session.get(url,
+                    params=data, timeout=timeout)
+        except requests.exceptions.Timeout:
+            raise TagasaurisApiException("Tagasauris call %s timed out." % url)
+        except requests.exceptions.ConnectionError:
+            raise TagasaurisApiException("Tagasauris call %s failed." % url)
 
         if reply.status_code >= 400:
             raise TagasaurisApiException(

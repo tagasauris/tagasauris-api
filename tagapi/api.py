@@ -149,7 +149,8 @@ class TagasaurisClient(object):
         path='worker/{worker_id}/',
         method='get',
         url_params=['worker_id'],
-        api_version='2'
+        api_version='2',
+        timeout=1,
     )
 
     def wait_for_complete(self, key,
