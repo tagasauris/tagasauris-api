@@ -89,6 +89,13 @@ class TagasaurisClient(object):
         url_params=['external_id'],
     )
 
+    """ Job stop """
+    restart_job = bind_api(
+        path='job/{external_id}/restart/',
+        method='get',
+        url_params=['external_id'],
+    )
+
     """ Job add media objects """
     job_add_media = bind_api(
         path='job/{external_id}/add_media/',
