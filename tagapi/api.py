@@ -65,7 +65,7 @@ class TagasaurisClient(object):
         path='job/',
         method='post',
         required_params=['id', 'title', 'task', ['mediaobjects', 's3']],
-        optional_params=['workflow', 'mturk_config'],
+        optional_params=['workflow', 'mturk_config', 'labels'],
     )
 
     def create_job(self, dummy_media=[], *args, **kwargs):
