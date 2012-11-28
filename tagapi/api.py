@@ -168,6 +168,14 @@ class TagasaurisClient(object):
         api_version='2',
     )
 
+    """ Worker bonus pay """
+    send_message = bind_api(
+        path='worker/message/',
+        method='post',
+        required_params=['worker_id', 'subject', 'content'],
+        api_version='2',
+    )
+
     def wait_for_complete(self, key,
             backoff=combined_exponential_backoff):
         if type(key) is dict:
