@@ -104,6 +104,14 @@ class TagasaurisClient(object):
         url_params=['external_id'],
     )
 
+    """ Consensus vote override """
+    override_consensus_vote = bind_api(
+        path='correctness_override',
+        method='post',
+        required_params=['id', 'correctness'],
+        api_version=3,
+    )
+
     """ Progress tracking """
     status_progress = bind_api(
         path='status/progress/{status_key}/',
