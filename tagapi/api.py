@@ -106,7 +106,7 @@ class TagasaurisClient(object):
 
     """ Consensus vote override """
     override_consensus_vote = bind_api(
-        path='correctness_override',
+        path='correctness_override/',
         method='post',
         required_params=['id', 'correctness'],
         api_version=3,
