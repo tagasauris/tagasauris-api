@@ -201,10 +201,14 @@ class TagasaurisClient(object):
                 # This is case when we ask for status immediately after recieving
                 # status_key. Sometimes dict is empty and we need to ask for it
                 # again.
+                print res
                 if res != {}:
                     completed = res['completed'] == 100 and res['status'] == 'ok'
                     if not completed and res['completed'] == 100:
-                        raise TagasaurisApiException('Task %s failed!' % key)
+                        raise TagasaurisApiException('Task %s failed: %s' % (
+                            key, res['message']))
+            except TagasaurisApiException:
+                raise
             except Exception, e:
                 log.exception(e)
 
