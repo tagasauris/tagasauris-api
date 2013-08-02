@@ -24,6 +24,17 @@ def exponential_backoff(base=2, max_retries=MAX_RETRIES):
     yield 0
 
 
+def linear_backoff(base=2, max_retries=MAX_RETRIES):
+    """
+        Generates exponential backoff.
+    """
+    value = 1
+    for _ in xrange(max_retries):
+        yield value
+        value += base
+    yield 0
+
+
 def combined_exponential_backoff(base=2, steps=10, retries=4):
     """
         Combines `retries` exponential backoffs of `steps` steps for increased
@@ -143,6 +154,16 @@ class TagasaurisClient(object):
         method='post',
         list=True,
         required_params=['mimetype', 'id', 'url', 'title'],
+        optional_params=['labels', 'attributes'],
+    )
+
+    """ Media object import """
+    fast_mediaobject_send = bind_api(
+        path='mediaobject/fast_import/',
+        method='post',
+        list=True,
+        required_params=['job_id', 'mimetype', 'id', ['content', 'url'],
+                         'title'],
         optional_params=['labels', 'attributes'],
     )
 
