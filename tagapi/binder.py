@@ -83,7 +83,7 @@ def bind_api(**config):
 
         if reply.status_code >= 400:
             raise TagasaurisApiException(
-                "Tagasauris call %s failed." % url,
+                "Tagasauris call %s failed: %s." % (url, reply.content),
                 response=reply)
 
         try:
