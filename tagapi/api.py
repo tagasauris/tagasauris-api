@@ -146,6 +146,15 @@ class TagasaurisClient(object):
         optional_params=['labels', 'attributes'],
     )
 
+    """ Tagmobile endpoint media object import """
+    tagmobile_mediaobject_send = bind_api(
+        path='mediaobject/tagmobile_import/',
+        method='post',
+        list=True,
+        required_params=['mimetype', 'id', ['content', 'url'], 'title', 'job_id'],
+        optional_params=['labels', 'attributes'],
+    )
+
     """ Creates dummy object for proper job creation """
     def mediaobject_add_dummy(self, dummy_id):
         return self.mediaobject_send([make_dummy(dummy_id)])
