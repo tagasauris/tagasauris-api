@@ -110,6 +110,7 @@ class TagasaurisClient(object):
         method='post',
         required_params=['id', 'correctness'],
         api_version=3,
+        json=False,
     )
 
     """ Progress tracking """

@@ -11,6 +11,7 @@ def bind_api(**config):
         path = config['path']
         method = config['method']
         sending_list = config.get('list', False)
+        dump_json = config.get('json', True)
         url_params = config.get('url_params', [])
         required_params = config.get('required_params', [])
         optional_params = config.get('optional_params', [])
@@ -68,10 +69,14 @@ def bind_api(**config):
             data = dict([(k, v) for k, v in kwargs.items()\
                 if k not in url_params])
 
+        data_serializer = lambda x: x
+        if dump_json:
+            data_serializer = json.dumps
+
         try:
             if method is 'post':
                 reply = api.session.post(url,
-                    data=json.dumps(data), timeout=timeout)
+                    data=data_serializer(data), timeout=timeout)
 
             if method is 'get':
                 reply = api.session.get(url,
