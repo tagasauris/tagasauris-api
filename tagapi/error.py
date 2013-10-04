@@ -12,5 +12,9 @@ class TagasaurisApiException(Exception):
         return self.reason
 
 
+class TagasaurisUnauthorizedException(TagasaurisApiException):
+    """ Not authorized to Tagasauris. """
+
+
 class TagasaurisApiMaxRetries(TagasaurisApiException):
     """ Max retries exceeded """

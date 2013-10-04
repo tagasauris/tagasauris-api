@@ -46,19 +46,22 @@ class TagasaurisClient(object):
         self.host = host
         self.api_version = api_version
         self.session = requests.session()
+        self.login = login
+        self.password = password
 
         # Each api call is authenticated with login & pass!
         if login is not None and password is not None:
-            credentials = {
-                "login": login,
-                "password": password
-            }
-            self.session.post("%s/api/2/login/" % self.host,
-                data=credentials)
-
+            self.authenticate(login, password)
         # No auth data provided.
         else:
             raise TagasaurisApiException('Authentication required!')
+
+    def authenticate(self, login=None, password=None):
+        data = {
+            'login': login or self.login,
+            'password': password or self.password,
+        }
+        self.session.post("%s/api/2/login/" % self.host, data=data)
 
     """ Job creation """
     _create_job = bind_api(

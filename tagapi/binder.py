@@ -1,8 +1,27 @@
 import json
+import logging
 import requests
+from functools import wraps
 
 from tools import flat_list
-from error import TagasaurisApiException
+from error import TagasaurisApiException, TagasaurisUnauthorizedException
+
+log = logging.getLogger(__file__)
+
+
+def authenticated_call(func):
+    """ In case of HTTP 401 response, tries to authenticate and send the call
+        again.
+    """
+    @wraps(func)
+    def wrapper(api, *args, **kwargs):
+        try:
+            return func(api, *args, **kwargs)
+        except TagasaurisUnauthorizedException:
+            log.info("Unauthorized call. Re-authorizing and retrying.")
+            api.authenticate()
+            return func(api, *args, **kwargs)
+    return wrapper
 
 
 def bind_api(**config):
@@ -87,7 +106,11 @@ def bind_api(**config):
             raise TagasaurisApiException("Tagasauris call %s failed." % url)
 
         if reply.status_code >= 400:
-            raise TagasaurisApiException(
+            exc_type = TagasaurisApiException
+            if reply.status_code == 401:
+                exc_type = TagasaurisUnauthorizedException
+
+            raise exc_type(
                 "Tagasauris call %s failed: %s." % (url, reply.content),
                 response=reply)
 
@@ -96,4 +119,5 @@ def bind_api(**config):
         except ValueError:
             return reply.content
 
-    return _call
+    auth_required = config.get('auth_required', True)
+    return authenticated_call(_call) if auth_required else _call
