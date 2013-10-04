@@ -6,7 +6,7 @@ from functools import wraps
 from tools import flat_list
 from error import TagasaurisApiException, TagasaurisUnauthorizedException
 
-log = logging.getLogger(__file__)
+log = logging.getLogger(__name__)
 
 
 def authenticated_call(func):
