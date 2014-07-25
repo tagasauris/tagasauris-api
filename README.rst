@@ -8,7 +8,7 @@ Examples
 ::
 
     import hashlib, uuid
-    from tagasauris_api.api import TagasaurisClient
+    from tagapi.api import TagasaurisClient
 
     ext_id = hashlib.md5(str(uuid.uuid4())).hexdigest()
 
